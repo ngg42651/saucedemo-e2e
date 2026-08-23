@@ -58,7 +58,7 @@
 | 빼기 버튼 | `[data-test="remove-sauce-labs-backpack"]` 형식 |
 | 장바구니 배지 | `[data-test="shopping-cart-badge"]` |
 | 장바구니 링크 | `[data-test="shopping-cart-link"]` |
-| 햄버거 메뉴 | `[data-test="open-menu"]` |
+| 햄버거 메뉴 | `#react-burger-menu-btn` — **`[data-test="open-menu"]`를 쓰지 마라.** 그 속성은 장식용 `<img class="bm-icon">`에 붙어 있고, 실제 클릭 대상은 같은 `.bm-burger-button` 안의 형제 `<button id="react-burger-menu-btn">`(absolute, 100%x100%, z-index 1)가 아이콘을 덮고 있다. img를 클릭하면 Playwright가 이벤트 가로채기로 판정해 실패한다. 닫기 버튼도 같은 구조다(`close-menu` img / `#react-burger-cross-btn`). 2026-08-23 실측 정정 |
 | 로그아웃 링크 | `[data-test="logout-sidebar-link"]` |
 | Reset App State | `[data-test="reset-sidebar-link"]` |
 | 상품 이미지 | CSS `.inventory_item_img img` |
