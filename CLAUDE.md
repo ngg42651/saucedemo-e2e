@@ -5,7 +5,7 @@ SauceDemo(https://www.saucedemo.com) 대상 E2E 자동화 포트폴리오.
 ## 명령어
 - 전체 테스트: `dotnet test`
 - 단일 클래스: `dotnet test --filter "FullyQualifiedName~LoginTests"`
-- 브라우저 설치: `pwsh bin/Debug/net10.0/playwright.ps1 install chromium`
+- 브라우저 설치: `powershell bin/Debug/net10.0/playwright.ps1 install chromium`
 
 ## 불변 규칙
 1. `Thread.Sleep`을 쓰지 않는다. Playwright 자동 대기와 `Expect()`만 쓴다
