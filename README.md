@@ -95,7 +95,9 @@ dotnet test --filter "FullyQualifiedName~LoginTests"
 2. 셀렉터는 Page 클래스 안에만 존재한다 — UI 변경 시 수정 지점이 한 곳이다.
    테스트 파일에 CSS·XPath 문자열이 등장하면 수정 지점이 흩어진다.
 3. `Thread.Sleep`을 쓰지 않는다 — Playwright 자동 대기와 `Expect()`만 쓴다.
-4. 재시도를 설정하지 않는다 — flaky를 재시도로 가리면 자동화의 의미가 없다.
+4. 테스트를 통과시키려고 assert를 약화시키지 않는다 — 통과 못 하면 통과 못
+   했다고 보고한다. assert를 느슨하게 고쳐 초록불을 만드는 순간 테스트는
+   진실을 보고하는 도구가 아니게 된다.
 5. 모든 Playwright 호출은 `await`한다.
 
 ## 발견한 결함
@@ -127,6 +129,9 @@ powershell bin/Debug/net10.0/playwright.ps1 show-trace trace.zip
 PowerShell 7(`pwsh`)이 설치되지 않은 로컬 환경에서는 `pwsh` 대신
 `powershell`을 쓴다(`CLAUDE.md` 명령어 기준). 트레이스에는 각 단계의
 스냅샷·네트워크 요청·콘솔 로그가 남는다.
+
+CI 재시도 횟수는 0이다. flaky를 재시도로 가리면 자동화가 존재하는
+이유가 사라지기 때문이다.
 
 ## 알려진 제약
 
