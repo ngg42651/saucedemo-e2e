@@ -9,12 +9,7 @@ public class CheckoutTests : BaseTest
 {
     private async Task GoToCheckoutInfoAsync(params string[] products)
     {
-        var login = new LoginPage(Page);
-        await login.GotoAsync();
-        await login.LoginAsync(TestData.StandardUser, TestData.Password);
-
-        var inventory = new InventoryPage(Page);
-        await Expect(inventory.Items).ToHaveCountAsync(6);
+        var inventory = await LoginAndOpenInventoryAsync();
         foreach (var name in products)
             await inventory.AddToCartAsync(name);
 

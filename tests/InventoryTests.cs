@@ -7,16 +7,6 @@ namespace SauceDemo.E2E.Tests;
 
 public class InventoryTests : BaseTest
 {
-    private async Task<InventoryPage> LoginAndOpenInventoryAsync(string user = TestData.StandardUser)
-    {
-        var login = new LoginPage(Page);
-        await login.GotoAsync();
-        await login.LoginAsync(user, TestData.Password);
-        var inventory = new InventoryPage(Page);
-        await Expect(inventory.Items).ToHaveCountAsync(6);
-        return inventory;
-    }
-
     [Fact]
     public async Task 이름_오름차순_정렬시_상품명이_사전순으로_배열된다()
     {

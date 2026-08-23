@@ -7,20 +7,10 @@ namespace SauceDemo.E2E.Tests;
 
 public class CartTests : BaseTest
 {
-    private async Task<InventoryPage> LoginAsync()
-    {
-        var login = new LoginPage(Page);
-        await login.GotoAsync();
-        await login.LoginAsync(TestData.StandardUser, TestData.Password);
-        var inventory = new InventoryPage(Page);
-        await Expect(inventory.Items).ToHaveCountAsync(6);
-        return inventory;
-    }
-
     [Fact]
     public async Task 상품을_담으면_배지_수가_담은_개수만큼_증가한다()
     {
-        var inventory = await LoginAsync();
+        var inventory = await LoginAndOpenInventoryAsync();
         var badge = new CartBadge(Page);
         Assert.Equal(0, await badge.CountAsync());
 
@@ -34,7 +24,7 @@ public class CartTests : BaseTest
     [Fact]
     public async Task 상품을_빼면_배지_수가_감소하고_뺀_상품만_사라진다()
     {
-        var inventory = await LoginAsync();
+        var inventory = await LoginAndOpenInventoryAsync();
         var badge = new CartBadge(Page);
         await inventory.AddToCartAsync(TestData.Backpack);
         await inventory.AddToCartAsync(TestData.BikeLight);
@@ -51,7 +41,7 @@ public class CartTests : BaseTest
     [Fact]
     public async Task 장바구니_페이지의_품목이_담은_상품과_정확히_일치한다()
     {
-        var inventory = await LoginAsync();
+        var inventory = await LoginAndOpenInventoryAsync();
         var expected = new[] { TestData.Backpack, TestData.FleeceJacket };
         foreach (var name in expected)
             await inventory.AddToCartAsync(name);
@@ -65,7 +55,7 @@ public class CartTests : BaseTest
     [Fact]
     public async Task Reset_App_State로_장바구니가_비워진다()
     {
-        var inventory = await LoginAsync();
+        var inventory = await LoginAndOpenInventoryAsync();
         var badge = new CartBadge(Page);
         await inventory.AddToCartAsync(TestData.Backpack);
         await Expect(badge.Badge).ToHaveTextAsync("1");
