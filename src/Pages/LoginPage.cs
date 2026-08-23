@@ -6,8 +6,8 @@ public class LoginPage(IPage page)
 {
     private readonly IPage _page = page;
 
-    public ILocator UsernameInput => _page.Locator("[data-test=\"username\"]");
-    public ILocator PasswordInput => _page.Locator("[data-test=\"password\"]");
+    private ILocator UsernameInput => _page.Locator("[data-test=\"username\"]");
+    private ILocator PasswordInput => _page.Locator("[data-test=\"password\"]");
     public ILocator LoginButton => _page.Locator("[data-test=\"login-button\"]");
     public ILocator ErrorMessage => _page.Locator("[data-test=\"error\"]");
 

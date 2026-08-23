@@ -126,7 +126,7 @@ CI 실패 시 Actions 실행 페이지의 `playwright-traces` 아티팩트를 �
 powershell bin/Debug/net10.0/playwright.ps1 show-trace trace.zip
 ```
 
-PowerShell 7(`pwsh`)이 설치되지 않은 로컬 환경에서는 `pwsh` 대신
+CI는 러너에 PowerShell 7이 있어 `pwsh`를 쓰고, 로컬에서는 위 예시처럼
 `powershell`을 쓴다(`CLAUDE.md` 명령어 기준). 트레이스에는 각 단계의
 스냅샷·네트워크 요청·콘솔 로그가 남는다.
 

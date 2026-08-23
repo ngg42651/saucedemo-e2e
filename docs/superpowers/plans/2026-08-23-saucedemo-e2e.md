@@ -1,7 +1,5 @@
 # SauceDemo E2E 자동화 구현 계획
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** SauceDemo를 대상으로 Page Object Model 구조의 Playwright .NET E2E 테스트 20개와 GitHub Actions CI를 갖춘 포트폴리오 저장소를 완성한다.
 
 **Architecture:** `Microsoft.Playwright.Xunit`의 `PageTest`를 상속한 테스트 클래스가 `Pages/`의 Page Object를 호출한다. Page는 조작·조회만 하고 검증은 테스트가 한다. 모든 셀렉터는 Page 클래스 내부에만 존재한다. `PageTest`가 테스트마다 새 `BrowserContext`를 주므로 장바구니 상태는 자동 격리되고 병렬 실행이 안전하다.

@@ -11,6 +11,7 @@ public class CheckoutInfoPage(IPage page)
     private ILocator FirstName => _page.Locator("[data-test=\"firstName\"]");
     private ILocator LastName => _page.Locator("[data-test=\"lastName\"]");
     private ILocator PostalCode => _page.Locator("[data-test=\"postalCode\"]");
+    private ILocator ContinueButton => _page.Locator("[data-test=\"continue\"]");
 
     public async Task FillAsync(string first, string last, string postal)
     {
@@ -19,6 +20,5 @@ public class CheckoutInfoPage(IPage page)
         await PostalCode.FillAsync(postal);
     }
 
-    public Task ContinueAsync() =>
-        _page.Locator("[data-test=\"continue\"]").ClickAsync();
+    public Task ContinueAsync() => ContinueButton.ClickAsync();
 }
