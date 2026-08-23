@@ -12,7 +12,8 @@ model: sonnet
 
 1. **assert 약화** — 이전 커밋 대비 검증이 느슨해졌는가. 삭제된 assert,
    범위가 넓어진 비교, 조건이 사라진 검증을 찾는다. 이것이 최우선이다.
-2. **불변 규칙 위반** — `CLAUDE.md`에 적힌 규칙 위반
+2. **불변 규칙 위반** — `CLAUDE.md`에 적힌 규칙 위반. 특히 `Thread.Sleep` 호출(Bash/Grep로 찾기)과
+   un-awaited Playwright 호출(`Locator`/`Page` 메서드를 `await` 없이 호출)을 명시적으로 찾는다.
 3. **책임 경계** — Page 클래스가 assert하는가, 테스트 파일에 셀렉터가 있는가
 4. **중복** — 같은 셀렉터나 같은 대기 로직이 두 곳 이상에 있는가
 
