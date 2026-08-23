@@ -24,6 +24,7 @@ public class InventoryTests : BaseTest
         await inventory.SortByAsync("az");
 
         var names = await inventory.ProductNamesAsync();
+        Assert.Equal(6, names.Count);
         Assert.Equal(names.OrderBy(n => n, StringComparer.Ordinal).ToList(), names);
     }
 
@@ -34,6 +35,7 @@ public class InventoryTests : BaseTest
         await inventory.SortByAsync("za");
 
         var names = await inventory.ProductNamesAsync();
+        Assert.Equal(6, names.Count);
         Assert.Equal(names.OrderByDescending(n => n, StringComparer.Ordinal).ToList(), names);
     }
 
@@ -44,6 +46,7 @@ public class InventoryTests : BaseTest
         await inventory.SortByAsync("lohi");
 
         var prices = await inventory.ProductPricesAsync();
+        Assert.Equal(6, prices.Count);
         Assert.Equal(prices.OrderBy(p => p).ToList(), prices);
     }
 
@@ -54,6 +57,7 @@ public class InventoryTests : BaseTest
         await inventory.SortByAsync("hilo");
 
         var prices = await inventory.ProductPricesAsync();
+        Assert.Equal(6, prices.Count);
         Assert.Equal(prices.OrderByDescending(p => p).ToList(), prices);
     }
 
@@ -83,6 +87,7 @@ public class InventoryTests : BaseTest
 
         var problem = await LoginAndOpenInventoryAsync(TestData.ProblemUser);
         var broken = await problem.ImageSourcesAsync();
+        Assert.Equal(6, broken.Count);
         Assert.All(broken, src => Assert.Contains("sl-404", src));
     }
 }
