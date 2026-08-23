@@ -56,4 +56,33 @@ public class InventoryTests : BaseTest
         var prices = await inventory.ProductPricesAsync();
         Assert.Equal(prices.OrderByDescending(p => p).ToList(), prices);
     }
+
+    [Fact]
+    public async Task 상품_상세로_진입했다_목록으로_복귀할_수_있다()
+    {
+        var inventory = await LoginAndOpenInventoryAsync();
+        await inventory.OpenProductAsync(TestData.Backpack);
+
+        var detail = new ProductDetailPage(Page);
+        await Expect(detail.Name).ToHaveTextAsync(TestData.Backpack);
+        await Expect(detail.Price).ToHaveTextAsync("$29.99");
+
+        await detail.BackToProductsAsync();
+        await Expect(inventory.Items).ToHaveCountAsync(6);
+    }
+
+    [Fact]
+    public async Task problem_user는_모든_상품_이미지가_404_플레이스홀더로_깨진다()
+    {
+        var standard = await LoginAndOpenInventoryAsync(TestData.StandardUser);
+        var healthy = await standard.ImageSourcesAsync();
+        Assert.Equal(6, healthy.Distinct().Count());
+        Assert.DoesNotContain(healthy, src => src.Contains("sl-404"));
+
+        await new HeaderMenu(Page).LogoutAsync();
+
+        var problem = await LoginAndOpenInventoryAsync(TestData.ProblemUser);
+        var broken = await problem.ImageSourcesAsync();
+        Assert.All(broken, src => Assert.Contains("sl-404", src));
+    }
 }
