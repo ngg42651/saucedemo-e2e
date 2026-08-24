@@ -1,6 +1,6 @@
 # SauceDemo E2E 자동화
 
-[![CI](https://github.com/ngg42651/saucedemo-playwright-dotnet/actions/workflows/ci.yml/badge.svg)](https://github.com/ngg42651/saucedemo-playwright-dotnet/actions/workflows/ci.yml)
+[![CI](https://github.com/ngg42651/saucedemo-e2e/actions/workflows/ci.yml/badge.svg)](https://github.com/ngg42651/saucedemo-e2e/actions/workflows/ci.yml)
 
 Playwright(.NET)와 xUnit으로 작성한 E2E 테스트 20개.
 대상은 공개 데모 사이트 [SauceDemo](https://www.saucedemo.com)다.
