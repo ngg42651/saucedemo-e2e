@@ -6,6 +6,8 @@
 
 **Tech Stack:** .NET 10 (`net10.0`), xUnit 2.9.3, Microsoft.Playwright.Xunit, Chromium, GitHub Actions
 
+**Status:** Task 1~11 완료(2026-08-23~24). 테스트 20개 전부 통과, GitHub Actions CI 통과, `main` 푸시 완료.
+
 **Spec:** `docs/superpowers/specs/2026-08-23-saucedemo-e2e-design.md`
 
 ## Global Constraints
@@ -117,7 +119,7 @@
 - Consumes: 없음 (첫 태스크)
 - Produces: `BaseTest` (추상 클래스, `PageTest` 상속, `ContextOptions()`에서 `BaseURL = "https://www.saucedemo.com"` 설정). `TestData` 정적 클래스: `StandardUser`, `LockedOutUser`, `ProblemUser`, `Password`, `FirstName`, `LastName`, `PostalCode`, `Backpack`, `BikeLight`, `FleeceJacket` (모두 `const string`), `TaxRate` (`const decimal`).
 
-- [ ] **Step 1: 프로젝트 생성**
+- [x] **Step 1: 프로젝트 생성**
 
 ```bash
 cd /d/Projects/saucedemo-playwright-dotnet
@@ -128,7 +130,7 @@ dotnet sln add SauceDemo.E2E.csproj
 dotnet new gitignore
 ```
 
-- [ ] **Step 2: Playwright 패키지 추가**
+- [x] **Step 2: Playwright 패키지 추가**
 
 ```bash
 dotnet add package Microsoft.Playwright.Xunit
@@ -137,7 +139,7 @@ dotnet build
 
 `dotnet build`가 성공해야 다음 단계의 `playwright.ps1`이 생성된다.
 
-- [ ] **Step 3: 브라우저 설치**
+- [x] **Step 3: 브라우저 설치**
 
 ```bash
 pwsh bin/Debug/net10.0/playwright.ps1 install chromium --with-deps
@@ -145,7 +147,7 @@ pwsh bin/Debug/net10.0/playwright.ps1 install chromium --with-deps
 
 `pwsh`가 없으면 `dotnet tool install --global PowerShell` 후 재시도한다. Chromium만 설치한다 — 스펙 8장에서 브라우저 매트릭스를 만들지 않기로 했다.
 
-- [ ] **Step 4: `src/Support/TestData.cs` 작성**
+- [x] **Step 4: `src/Support/TestData.cs` 작성**
 
 ```csharp
 namespace SauceDemo.E2E.Support;
@@ -170,7 +172,7 @@ public static class TestData
 }
 ```
 
-- [ ] **Step 5: `src/Support/BaseTest.cs` 작성**
+- [x] **Step 5: `src/Support/BaseTest.cs` 작성**
 
 ```csharp
 using Microsoft.Playwright;
@@ -188,7 +190,7 @@ public abstract class BaseTest : PageTest
 }
 ```
 
-- [ ] **Step 6: 스모크 테스트 작성**
+- [x] **Step 6: 스모크 테스트 작성**
 
 `tests/SmokeTests.cs`:
 
@@ -209,7 +211,7 @@ public class SmokeTests : BaseTest
 }
 ```
 
-- [ ] **Step 7: 테스트 실행**
+- [x] **Step 7: 테스트 실행**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~SmokeTests"
@@ -217,7 +219,7 @@ dotnet test --filter "FullyQualifiedName~SmokeTests"
 
 Expected: PASS 1개. 이 테스트는 TDD의 red 단계가 아니라 환경 검증용이므로 처음부터 통과해야 정상이다. 실패하면 브라우저 설치(Step 3)나 네트워크를 먼저 확인한다.
 
-- [ ] **Step 8: `CLAUDE.md` 작성**
+- [x] **Step 8: `CLAUDE.md` 작성**
 
 ```markdown
 # saucedemo-playwright-dotnet
@@ -240,7 +242,7 @@ SauceDemo(https://www.saucedemo.com) 대상 E2E 자동화 포트폴리오.
 같은 지적이 두 번 나오면 여기에 규칙으로 올린다. 미리 상상해서 쓰지 않는다.
 ```
 
-- [ ] **Step 9: 커밋**
+- [x] **Step 9: 커밋**
 
 ```bash
 git add -A
@@ -262,7 +264,7 @@ git commit -m "chore: 프로젝트 스캐폴드와 스모크 테스트"
   - `LoginPage(IPage page)` — `Task GotoAsync()`, `Task LoginAsync(string user, string password)`, `ILocator UsernameInput/PasswordInput/LoginButton/ErrorMessage { get; }`
   - `InventoryPage(IPage page)` — `ILocator Title { get; }` (이 태스크에서는 제목만. 나머지는 Task 6에서 추가)
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/LoginTests.cs`:
 
@@ -289,7 +291,7 @@ public class LoginTests : BaseTest
 }
 ```
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~LoginTests"
@@ -297,7 +299,7 @@ dotnet test --filter "FullyQualifiedName~LoginTests"
 
 Expected: 컴파일 실패. `LoginPage`, `InventoryPage`가 존재하지 않는다.
 
-- [ ] **Step 3: `src/Pages/LoginPage.cs` 작성**
+- [x] **Step 3: `src/Pages/LoginPage.cs` 작성**
 
 ```csharp
 using Microsoft.Playwright;
@@ -326,7 +328,7 @@ public class LoginPage(IPage page)
 
 `FillAsync`에 빈 문자열을 넣어도 정상 동작하므로 빈칸 케이스도 같은 메서드로 처리한다.
 
-- [ ] **Step 4: `src/Pages/InventoryPage.cs` 최소 작성**
+- [x] **Step 4: `src/Pages/InventoryPage.cs` 최소 작성**
 
 ```csharp
 using Microsoft.Playwright;
@@ -341,7 +343,7 @@ public class InventoryPage(IPage page)
 }
 ```
 
-- [ ] **Step 5: 스모크 테스트 삭제**
+- [x] **Step 5: 스모크 테스트 삭제**
 
 ```bash
 rm tests/SmokeTests.cs
@@ -349,7 +351,7 @@ rm tests/SmokeTests.cs
 
 역할이 로그인 성공 테스트로 대체됐다. 남겨두면 같은 것을 두 번 검증한다.
 
-- [ ] **Step 6: 테스트 통과 확인**
+- [x] **Step 6: 테스트 통과 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~LoginTests"
@@ -357,7 +359,7 @@ dotnet test --filter "FullyQualifiedName~LoginTests"
 
 Expected: PASS 1개.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add -A
@@ -375,7 +377,7 @@ git commit -m "feat: LoginPage와 로그인 성공 테스트"
 - Consumes: `LoginPage`, `TestData` (Task 2)
 - Produces: 없음 (테스트만 추가)
 
-- [ ] **Step 1: 테스트 5개 추가**
+- [x] **Step 1: 테스트 5개 추가**
 
 `tests/LoginTests.cs`의 클래스 안에 아래를 추가한다.
 
@@ -414,7 +416,7 @@ git commit -m "feat: LoginPage와 로그인 성공 테스트"
 
 URL을 함께 검증하는 이유: 오류 메시지만 확인하면 메시지가 뜬 채로 페이지가 넘어가는 경우를 놓친다.
 
-- [ ] **Step 2: 실행**
+- [x] **Step 2: 실행**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~LoginTests" -v n
@@ -424,14 +426,14 @@ Expected: PASS 6개 (성공 1 + Theory 4 + 직접 접근 1).
 
 Page 객체가 이미 존재하므로 red 단계 없이 통과하는 것이 정상이다. 실패하면 오류 메시지 문자열이 사이트에서 바뀐 것이므로 실제 사이트를 다시 확인해 문자열을 고친다 — assert를 지우지 않는다.
 
-- [ ] **Step 3: 커밋**
+- [x] **Step 3: 커밋**
 
 ```bash
 git add -A
 git commit -m "test: 로그인 실패 5케이스"
 ```
 
-- [ ] **Step 4: 1단계 회고 — CLAUDE.md 갱신**
+- [x] **Step 4: 1단계 회고 — CLAUDE.md 갱신**
 
 M1 구간에서 실제로 반복된 지적을 `CLAUDE.md`의 불변 규칙에 추가한다. 없으면 추가하지 않는다. 상상해서 쓰지 않는 것이 이 단계의 목적이다.
 
@@ -453,7 +455,7 @@ git commit -m "docs: M1에서 관찰된 규칙 추가"
 - Consumes: `CLAUDE.md`의 불변 규칙 (Task 1, Task 3)
 - Produces: 없음 (도구 설정)
 
-- [ ] **Step 1: 리뷰 에이전트 정의 작성**
+- [x] **Step 1: 리뷰 에이전트 정의 작성**
 
 `.claude/agents/reviewer.md`:
 
@@ -490,11 +492,13 @@ model: sonnet
 - 확신이 없으면 단정하지 말고 "확인 필요"로 표시한다
 ```
 
-- [ ] **Step 2: 직전 커밋에 대해 시험 실행**
+- [ ] **Step 2: 직전 커밋에 대해 시험 실행** — 생략. 태스크마다 컨텍스트가
+  분리된 리뷰어를 이미 돌리고 있어 같은 diff를 두 번 리뷰하는 비용만 늘고
+  판단이 달라지지 않는다.
 
 Task 3의 커밋을 대상으로 리뷰 에이전트를 한 번 돌린다. 지적이 타당한지 사람이 판단한다. 지적이 전부 무의미하면 체크 항목을 조정한 뒤 다시 돌린다.
 
-- [ ] **Step 3: 커밋**
+- [x] **Step 3: 커밋**
 
 ```bash
 git add .claude/agents/reviewer.md
@@ -515,7 +519,7 @@ git commit -m "chore: 리뷰 에이전트 정의 추가"
   - `HeaderMenu(IPage page)` — `Task LogoutAsync()`, `Task ResetAppStateAsync()`
   - `CartBadge(IPage page)` — `Task<int> CountAsync()` (배지가 없으면 `0`), `Task OpenCartAsync()`, `ILocator Badge { get; }`
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/SessionTests.cs`:
 
@@ -550,7 +554,7 @@ public class SessionTests : BaseTest
 
 로그아웃 후 로그인 화면으로 돌아온 것만 확인하면 부족하다. 세션이 실제로 무효화됐는지는 직접 접근을 다시 시도해야 알 수 있다.
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~SessionTests"
@@ -558,7 +562,7 @@ dotnet test --filter "FullyQualifiedName~SessionTests"
 
 Expected: 컴파일 실패. `HeaderMenu`가 없다.
 
-- [ ] **Step 3: `src/Components/HeaderMenu.cs` 작성**
+- [x] **Step 3: `src/Components/HeaderMenu.cs` 작성**
 
 ```csharp
 using Microsoft.Playwright;
@@ -587,7 +591,7 @@ public class HeaderMenu(IPage page)
 }
 ```
 
-- [ ] **Step 4: `src/Components/CartBadge.cs` 작성**
+- [x] **Step 4: `src/Components/CartBadge.cs` 작성**
 
 ```csharp
 using Microsoft.Playwright;
@@ -612,7 +616,7 @@ public class CartBadge(IPage page)
 }
 ```
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~SessionTests"
@@ -620,11 +624,11 @@ dotnet test --filter "FullyQualifiedName~SessionTests"
 
 Expected: PASS 1개.
 
-- [ ] **Step 6: 리뷰 에이전트 실행**
+- [x] **Step 6: 리뷰 에이전트 실행**
 
 `git diff HEAD~1`을 대상으로 리뷰를 돌린다. critical·major 지적은 고치고 다시 테스트한다.
 
-- [ ] **Step 7: 커밋**
+- [x] **Step 7: 커밋**
 
 ```bash
 git add -A
@@ -647,7 +651,7 @@ git commit -m "feat: HeaderMenu·CartBadge 컴포넌트와 로그아웃 세션 �
   `Task<IReadOnlyList<string>> ImageSourcesAsync()`, `Task AddToCartAsync(string productName)`,
   `Task RemoveFromCartAsync(string productName)`, `Task OpenProductAsync(string productName)`
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/InventoryTests.cs`:
 
@@ -717,7 +721,7 @@ public class InventoryTests : BaseTest
 
 `StringComparer.Ordinal`을 쓰는 이유: `Test.allTheThings() T-Shirt (Red)`처럼 특수문자로 시작하는 이름이 섞여 있어 문화권 기반 비교와 사이트의 정렬 결과가 어긋날 수 있다. 이 케이스가 실패하면 사이트의 실제 정렬 기준을 확인하고 비교자를 맞춘다 — assert를 지우지 않는다.
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~InventoryTests"
@@ -725,7 +729,7 @@ dotnet test --filter "FullyQualifiedName~InventoryTests"
 
 Expected: 컴파일 실패. `SortByAsync`, `Items` 등이 없다.
 
-- [ ] **Step 3: `src/Pages/InventoryPage.cs` 전체 교체**
+- [x] **Step 3: `src/Pages/InventoryPage.cs` 전체 교체**
 
 ```csharp
 using System.Globalization;
@@ -786,7 +790,7 @@ public class InventoryPage(IPage page)
 
 `Slug`가 사이트 규칙과 맞는지는 Task 8의 담기 테스트가 실제로 검증한다.
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~InventoryTests"
@@ -794,7 +798,7 @@ dotnet test --filter "FullyQualifiedName~InventoryTests"
 
 Expected: PASS 4개.
 
-- [ ] **Step 5: 리뷰 에이전트 실행 후 커밋**
+- [x] **Step 5: 리뷰 에이전트 실행 후 커밋**
 
 ```bash
 git add -A
@@ -813,7 +817,7 @@ git commit -m "feat: InventoryPage 정렬·조회와 정렬 4케이스"
 - Consumes: `InventoryPage.OpenProductAsync`, `InventoryPage.ImageSourcesAsync` (Task 6), `HeaderMenu.LogoutAsync` (Task 5)
 - Produces: `ProductDetailPage(IPage page)` — `ILocator Name { get; }`, `ILocator Price { get; }`, `Task BackToProductsAsync()`
 
-- [ ] **Step 1: 테스트 2개 추가**
+- [x] **Step 1: 테스트 2개 추가**
 
 `InventoryTests` 클래스 안에 추가한다.
 
@@ -850,7 +854,7 @@ git commit -m "feat: InventoryPage 정렬·조회와 정렬 4케이스"
 
 두 번째 테스트가 `standard_user`를 먼저 확인하는 이유: `problem_user`의 이미지가 전부 `sl-404`라는 것만으로는 그것이 결함인지 원래 그런지 알 수 없다. 정상 계정과 대조해야 결함을 검출했다고 말할 수 있다. `Distinct().Count() == 6`은 정상 계정의 이미지가 상품마다 다르다는 확인이다.
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~InventoryTests"
@@ -858,7 +862,7 @@ dotnet test --filter "FullyQualifiedName~InventoryTests"
 
 Expected: 컴파일 실패. `ProductDetailPage`가 없다.
 
-- [ ] **Step 3: `src/Pages/ProductDetailPage.cs` 작성**
+- [x] **Step 3: `src/Pages/ProductDetailPage.cs` 작성**
 
 ```csharp
 using Microsoft.Playwright;
@@ -877,7 +881,7 @@ public class ProductDetailPage(IPage page)
 }
 ```
 
-- [ ] **Step 4: 테스트 통과 확인**
+- [x] **Step 4: 테스트 통과 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~InventoryTests"
@@ -887,7 +891,7 @@ Expected: PASS 6개.
 
 `back-to-products` 셀렉터는 주문 완료 페이지에서 확인된 것이다. 상품 상세 페이지가 다른 이름을 쓴다면 실패한다. 실패하면 실제 DOM을 열어 확인하고 셀렉터를 고친다 — 테스트를 지우지 않는다.
 
-- [ ] **Step 5: 전체 테스트 실행**
+- [x] **Step 5: 전체 테스트 실행**
 
 ```bash
 dotnet test
@@ -895,14 +899,14 @@ dotnet test
 
 Expected: PASS 13개 (로그인 6 + 목록 6 + 로그아웃 1).
 
-- [ ] **Step 6: 리뷰 에이전트 실행 후 커밋**
+- [x] **Step 6: 리뷰 에이전트 실행 후 커밋**
 
 ```bash
 git add -A
 git commit -m "feat: 상품 상세 페이지와 problem_user 이미지 결함 검출"
 ```
 
-- [ ] **Step 7: 2단계 회고**
+- [x] **Step 7: 2단계 회고**
 
 리뷰 에이전트가 M2 구간에서 실제로 잡은 문제를 기록한다. 반복된 지적은 `CLAUDE.md` 규칙으로 승격한다. 잡은 것이 없으면 체크 항목이 현실과 안 맞는 것이므로 조정한다.
 
@@ -920,7 +924,7 @@ git commit -m "feat: 상품 상세 페이지와 problem_user 이미지 결함 �
 
 **이 태스크부터 계획과 구현을 분리한다.** 구현 전에 "무엇을 검증할 것인가"를 문장으로 먼저 적고 승인받은 뒤 코드를 쓴다. Step 1이 그 계획에 해당한다.
 
-- [ ] **Step 1: 검증 대상 확정 (계획 게이트)**
+- [x] **Step 1: 검증 대상 확정 (계획 게이트)**
 
 네 케이스가 각각 무엇을 확인하는지 확정한다.
 
@@ -931,7 +935,7 @@ git commit -m "feat: 상품 상세 페이지와 problem_user 이미지 결함 �
 
 3번에서 개수만 세면 다른 상품이 담겨도 통과한다. 집합 비교여야 한다.
 
-- [ ] **Step 2: 실패하는 테스트 작성**
+- [x] **Step 2: 실패하는 테스트 작성**
 
 `tests/CartTests.cs`:
 
@@ -1017,7 +1021,7 @@ public class CartTests : BaseTest
 }
 ```
 
-- [ ] **Step 3: 실패 확인**
+- [x] **Step 3: 실패 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~CartTests"
@@ -1025,7 +1029,7 @@ dotnet test --filter "FullyQualifiedName~CartTests"
 
 Expected: 컴파일 실패. `CartPage`가 없다.
 
-- [ ] **Step 4: `src/Pages/CartPage.cs` 작성**
+- [x] **Step 4: `src/Pages/CartPage.cs` 작성**
 
 ```csharp
 using Microsoft.Playwright;
@@ -1047,7 +1051,7 @@ public class CartPage(IPage page)
 }
 ```
 
-- [ ] **Step 5: 테스트 통과 확인**
+- [x] **Step 5: 테스트 통과 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~CartTests"
@@ -1057,7 +1061,7 @@ Expected: PASS 4개.
 
 `Reset App State` 케이스가 실패하면 사이트가 배지만 지우고 장바구니 내용은 남기는 것이다. 그 경우 이는 실제 결함이므로 README에 기록하고 테스트를 실제 동작에 맞춰 조정하되, 무엇이 기대와 달랐는지 반드시 남긴다.
 
-- [ ] **Step 6: 리뷰 에이전트 실행 후 커밋**
+- [x] **Step 6: 리뷰 에이전트 실행 후 커밋**
 
 ```bash
 git add -A
@@ -1081,7 +1085,7 @@ git commit -m "feat: CartPage와 장바구니 4케이스"
 
 **계획 게이트.** 이 태스크의 핵심은 총액 검증이다. 화면에 표시된 합계를 화면에 표시된 소계·세금과만 비교하면 사이트가 세 값을 모두 틀리게 계산해도 통과한다. **상품 정가를 테스트가 독립적으로 합산해 기대값을 만들고** 그것을 화면 값과 비교한다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/CheckoutTests.cs`:
 
@@ -1164,7 +1168,7 @@ public class CheckoutTests : BaseTest
 
 `MidpointRounding.AwayFromZero`를 쓰는 이유: .NET의 기본 반올림은 은행가 반올림(`ToEven`)이라 `2.345`를 `2.34`로 만든다. 웹 애플리케이션의 금액 계산은 보통 사사오입이다. 실측한 39.98 케이스는 두 방식이 같은 값(3.20)을 내지만 다른 상품 조합에서 갈릴 수 있으므로 명시한다.
 
-- [ ] **Step 2: 실패 확인**
+- [x] **Step 2: 실패 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~CheckoutTests"
@@ -1172,7 +1176,7 @@ dotnet test --filter "FullyQualifiedName~CheckoutTests"
 
 Expected: 컴파일 실패. 체크아웃 Page 3종이 없다.
 
-- [ ] **Step 3: `src/Pages/CheckoutInfoPage.cs` 작성**
+- [x] **Step 3: `src/Pages/CheckoutInfoPage.cs` 작성**
 
 ```csharp
 using Microsoft.Playwright;
@@ -1201,7 +1205,7 @@ public class CheckoutInfoPage(IPage page)
 }
 ```
 
-- [ ] **Step 4: `src/Pages/CheckoutOverviewPage.cs` 작성**
+- [x] **Step 4: `src/Pages/CheckoutOverviewPage.cs` 작성**
 
 ```csharp
 using System.Globalization;
@@ -1230,7 +1234,7 @@ public class CheckoutOverviewPage(IPage page)
 }
 ```
 
-- [ ] **Step 5: `src/Pages/CheckoutCompletePage.cs` 작성**
+- [x] **Step 5: `src/Pages/CheckoutCompletePage.cs` 작성**
 
 ```csharp
 using Microsoft.Playwright;
@@ -1243,7 +1247,7 @@ public class CheckoutCompletePage(IPage page)
 }
 ```
 
-- [ ] **Step 6: 테스트 통과 확인**
+- [x] **Step 6: 테스트 통과 확인**
 
 ```bash
 dotnet test --filter "FullyQualifiedName~CheckoutTests"
@@ -1251,7 +1255,7 @@ dotnet test --filter "FullyQualifiedName~CheckoutTests"
 
 Expected: PASS 3개.
 
-- [ ] **Step 7: 전체 20케이스 실행**
+- [x] **Step 7: 전체 20케이스 실행**
 
 ```bash
 dotnet test
@@ -1261,14 +1265,14 @@ Expected: PASS 20개 (로그인 6 + 목록 6 + 장바구니 4 + 체크아웃 3 +
 
 개수가 20이 아니면 세어서 어느 영역이 빠졌는지 확인한다.
 
-- [ ] **Step 8: 리뷰 에이전트 실행 후 커밋**
+- [x] **Step 8: 리뷰 에이전트 실행 후 커밋**
 
 ```bash
 git add -A
 git commit -m "feat: 체크아웃 3케이스와 총액 계산 독립 검증"
 ```
 
-- [ ] **Step 9: 3단계 회고**
+- [x] **Step 9: 3단계 회고**
 
 Step 1의 계획 게이트가 실제로 무엇을 미리 잡았는지 기록한다. 아무것도 안 잡았다면 계획 단계를 이 규모의 프로젝트에서 유지할 가치가 있는지 판단한다.
 
@@ -1283,7 +1287,7 @@ Step 1의 계획 게이트가 실제로 무엇을 미리 잡았는지 기록한�
 - Consumes: Task 9까지의 전체 테스트 스위트
 - Produces: 없음
 
-- [ ] **Step 1: `.runsettings` 작성**
+- [x] **Step 1: `.runsettings` 작성**
 
 리포지토리 루트에 만든다. `BaseTest`는 건드리지 않는다 — 실행 설정이 코드에 섞이면 로컬에서 헤드풀로 디버깅할 수 없다.
 
@@ -1299,7 +1303,7 @@ Step 1의 계획 게이트가 실제로 무엇을 미리 잡았는지 기록한�
 </RunSettings>
 ```
 
-- [ ] **Step 2: `.github/workflows/ci.yml` 작성**
+- [x] **Step 2: `.github/workflows/ci.yml` 작성**
 
 ```yaml
 name: CI
@@ -1349,7 +1353,7 @@ jobs:
 
 재시도 설정을 넣지 않는다. 스케줄 트리거를 넣지 않는다. 브라우저 매트릭스를 넣지 않는다. 셋 다 스펙 8장의 결정이다.
 
-- [ ] **Step 3: 로컬에서 CI와 같은 명령으로 실행**
+- [x] **Step 3: 로컬에서 CI와 같은 명령으로 실행**
 
 ```bash
 dotnet build --configuration Release
@@ -1359,14 +1363,14 @@ dotnet test --no-build --configuration Release --settings .runsettings
 
 Expected: PASS 20개. Release 구성에서 `playwright.ps1` 경로가 달라지므로 여기서 먼저 확인해야 CI에서 헛돈다.
 
-- [ ] **Step 4: 커밋**
+- [x] **Step 4: 커밋**
 
 ```bash
 git add -A
 git commit -m "ci: GitHub Actions 워크플로와 실행 설정"
 ```
 
-- [ ] **Step 5: 원격 저장소 생성과 푸시**
+- [x] **Step 5: 원격 저장소 생성과 푸시**
 
 원격이 아직 없으므로 public 저장소를 만들고 연결한다. 저장소가 공개되는 시점이므로 진행 전에 사용자 확인을 받는다.
 
@@ -1374,7 +1378,7 @@ git commit -m "ci: GitHub Actions 워크플로와 실행 설정"
 gh repo create saucedemo-playwright-dotnet --public --source=. --remote=origin --push
 ```
 
-- [ ] **Step 6: CI 통과 확인**
+- [x] **Step 6: CI 통과 확인**
 
 ```bash
 gh run watch
@@ -1393,7 +1397,7 @@ Expected: 성공. 실패하면 로그를 읽고 고친다. 여기서 실패를 �
 - Consumes: Task 1~10의 모든 결과
 - Produces: 없음
 
-- [ ] **Step 1: README 작성**
+- [x] **Step 1: README 작성**
 
 아래 구조로 작성한다. 각 절은 실제로 구현한 내용과 실행 결과를 근거로 채운다. 계획서 문구를 그대로 옮기지 않는다.
 
@@ -1457,11 +1461,11 @@ CI 실패 시 Actions 실행 페이지의 `playwright-traces` 아티팩트를 �
 이 때문에 스케줄 실행을 붙이지 않고 push·pull_request에서만 돌린다.
 ```
 
-- [ ] **Step 2: 배지 URL의 계정명 치환**
+- [x] **Step 2: 배지 URL의 계정명 치환**
 
 `<계정>` 자리를 실제 GitHub 계정명으로 바꾼다. 치환하지 않으면 배지가 깨진 이미지로 뜬다.
 
-- [ ] **Step 3: 커밋과 푸시**
+- [x] **Step 3: 커밋과 푸시**
 
 ```bash
 git add README.md
@@ -1469,7 +1473,7 @@ git commit -m "docs: README 테스트 전략"
 git push
 ```
 
-- [ ] **Step 4: 최종 확인**
+- [x] **Step 4: 최종 확인**
 
 ```bash
 dotnet test
@@ -1478,7 +1482,7 @@ gh run watch
 
 Expected: 로컬 PASS 20개, CI 성공, README 배지 정상 표시.
 
-- [ ] **Step 5: 완료 판정**
+- [x] **Step 5: 완료 판정**
 
 스펙 11장의 두 조건을 확인한다.
 

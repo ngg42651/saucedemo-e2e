@@ -1,4 +1,4 @@
-# saucedemo-playwright-dotnet
+# saucedemo-e2e
 
 SauceDemo(https://www.saucedemo.com) 대상 E2E 자동화 포트폴리오.
 
