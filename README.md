@@ -117,6 +117,30 @@ dotnet test --filter "FullyQualifiedName~LoginTests"
 `InventoryTests.problem_user는_모든_상품_이미지가_404_플레이스홀더로_깨진다`
 테스트가 두 계정을 한 테스트 안에서 비교해 이를 검출한다.
 
+## CI 결과 확인
+
+README 상단 배지가 최신 상태를 나타낸다. 초록 `passing`이면 통과, 빨강
+`failing`이면 실패, 회색 `no status`면 워크플로가 아직 한 번도 돌지 않은
+상태다. 배지를 클릭하면 Actions 실행 목록으로 이동한다. 배지 이미지는
+GitHub가 몇 분 캐싱하므로 방금 푸시한 결과가 안 보이면 강력 새로고침
+(`Ctrl+Shift+R`)한다.
+
+명령줄에서는 배지 SVG의 제목만 뽑아 확인한다.
+
+```bash
+curl -s https://github.com/ngg42651/saucedemo-e2e/actions/workflows/ci.yml/badge.svg | grep -o "CI - [a-z]*"
+```
+
+정확한 확인은 Actions 탭에서 한다. **Actions → CI**에서 실행을 하나 고르고
+`test` 잡의 **Test** 단계 로그를 열면 마지막에 요약 줄이 남는다.
+
+```
+Passed!  - Failed: 0, Passed: 20, Skipped: 0, Total: 20, Duration: 8 s
+```
+
+`Total`이 20인지 반드시 확인한다. 테스트가 하나도 발견되지 않아도 잡은
+초록으로 끝나기 때문에, 초록불만 보고 판단하면 빈 실행을 통과로 착각한다.
+
 ## 실패 분석 방법
 
 CI 실패 시 Actions 실행 페이지의 `playwright-traces` 아티팩트를 내려받아
