@@ -59,7 +59,7 @@ public class InventoryTests : BaseTest
 
         var detail = new ProductDetailPage(Page);
         await Expect(detail.Name).ToHaveTextAsync(TestData.Backpack);
-        await Expect(detail.Price).ToHaveTextAsync("$29.99");
+        await Expect(detail.Price).ToHaveTextAsync($"${TestData.BackpackPrice}");
 
         await detail.BackToProductsAsync();
         await Expect(inventory.Items).ToHaveCountAsync(6);

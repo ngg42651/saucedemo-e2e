@@ -32,10 +32,8 @@ public class CheckoutTests : BaseTest
     [Fact]
     public async Task 합계는_상품_정가_합산에_세율_8퍼센트를_적용한_값과_일치한다()
     {
-        // 정가는 상품 목록에서 확인된 값. 테스트가 독립적으로 기대값을 계산한다.
-        const decimal backpackPrice = 29.99m;   // Sauce Labs Backpack
-        const decimal bikeLightPrice = 9.99m;   // Sauce Labs Bike Light
-        var expectedSubtotal = backpackPrice + bikeLightPrice;
+        // 기대값은 화면에서 읽지 않고 테스트가 독립적으로 계산한다. 정가는 TestData 상수.
+        var expectedSubtotal = TestData.BackpackPrice + TestData.BikeLightPrice;
         var expectedTax = Math.Round(
             expectedSubtotal * TestData.TaxRate, 2, MidpointRounding.AwayFromZero);
         var expectedTotal = expectedSubtotal + expectedTax;
