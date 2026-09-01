@@ -24,12 +24,51 @@ jobs:
       - name: Test
         run: dotnet test --no-build --configuration Release --settings .runsettings --logger "trx;LogFileName=results.trx"
 
+      - name: Summarize test counts
+        if: always()
+        shell: bash
+        run: |
+          files=$(find . -name 'results.trx' -not -path './**/obj/*')
+          if [ -z "$files" ]; then
+            echo "::error::results.trx 를 찾지 못했다. 테스트가 실행되지 않았을 수 있다."
+            exit 1
+          fi
+
+          total=0; passed=0; failed=0
+          rows=""
+          for f in $files; do
+            counters=$(grep -o '<Counters [^/]*' "$f" | head -1)
+            t=$(echo "$counters" | sed -n 's/.*[^a-zA-Z]total="\([0-9]*\)".*/\1/p')
+            p=$(echo "$counters" | sed -n 's/.*[^a-zA-Z]passed="\([0-9]*\)".*/\1/p')
+            fl=$(echo "$counters" | sed -n 's/.*[^a-zA-Z]failed="\([0-9]*\)".*/\1/p')
+            t=${t:-0}; p=${p:-0}; fl=${fl:-0}
+            rows="${rows}| \`${f#./}\` | ${t} | ${p} | ${fl} |"$'\n'
+            total=$((total + t)); passed=$((passed + p)); failed=$((failed + fl))
+          done
+
+          {
+            echo "## 테스트 실행 건수"
+            echo ""
+            echo "| 결과 파일 | 전체 | 통과 | 실패 |"
+            echo "|---|---:|---:|---:|"
+            printf '%s' "$rows"
+            echo "| **합계** | **${total}** | **${passed}** | **${failed}** |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "total=${total} passed=${passed} failed=${failed}"
+          if [ "$total" -eq 0 ]; then
+            echo "::error::테스트가 0건 실행됐다. 발견된 테스트가 없으면 잡을 통과로 두지 않는다."
+            exit 1
+          fi
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: TestResults/
+          path: |
+            TestResults/
+            selenium/TestResults/
           if-no-files-found: ignore
 
       - name: Upload Playwright traces

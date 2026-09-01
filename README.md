@@ -4,6 +4,8 @@
 
 Playwright(.NET)와 xUnit으로 작성한 E2E 테스트 20개.
 대상은 공개 데모 사이트 [SauceDemo](https://www.saucedemo.com)다.
+같은 로그인 시나리오를 Selenium C#으로 재구현한 테스트 2개가 `selenium/`에 따로 있다
+(→ [왜 주력은 Playwright인가](#왜-주력은-playwright인가)).
 
 ## 실행
 
@@ -16,7 +18,15 @@ dotnet test
 
 # 단일 클래스만
 dotnet test --filter "FullyQualifiedName~LoginTests"
+
+# 주력 스위트(Playwright)만
+dotnet test SauceDemo.E2E.csproj
+
+# Selenium 보조 스위트만 (로컬에 Chrome 필요, 드라이버는 Selenium Manager가 받는다)
+dotnet test selenium/SauceDemo.Selenium.csproj
 ```
+
+`dotnet test`를 인자 없이 돌리면 두 프로젝트가 모두 실행된다(20 + 2 = 22개).
 
 ## 테스트 전략
 
@@ -79,6 +89,11 @@ dotnet test --filter "FullyQualifiedName~LoginTests"
   Support/        BaseTest, TestData
 /tests
   LoginTests.cs  InventoryTests.cs  CartTests.cs  CheckoutTests.cs  SessionTests.cs
+
+/selenium         보조 스위트 (별도 프로젝트)
+  Pages/          LoginPage
+  Support/        BaseTest
+  Tests/          LoginTests.cs
 ```
 
 `Pages/`와 `Components/`를 분리했다. 헤더 메뉴(로그아웃 등)와 장바구니
@@ -86,6 +101,30 @@ dotnet test --filter "FullyQualifiedName~LoginTests"
 중복 정의하는 것이 Page Object Model을 처음 쓸 때 가장 흔히 저지르는
 실수다. 공유 요소를 `Components/`로 분리해 `HeaderMenu`, `CartBadge`
 하나씩만 두고 필요한 Page에서 조합해 쓰도록 했다.
+
+### 왜 주력은 Playwright인가
+
+`selenium/`에는 주력 스위트의 로그인 케이스 두 개(정상 로그인, 잠긴 계정)를
+Selenium C#으로 그대로 옮긴 테스트가 있다. 커버리지를 늘리려는 것이 아니라
+**같은 시나리오를 두 도구로 써 본 뒤 주력을 고른 근거를 남기려는 것**이다.
+20개를 양쪽에 중복으로 두면 UI가 바뀔 때마다 같은 수정을 두 번 해야 하므로
+비교에 필요한 최소한만 남겼다.
+
+Playwright를 주력으로 고른 이유는 셋이다.
+
+1. **대기 처리.** Playwright는 `Expect()`와 액션 API에 자동 대기가 들어 있어
+   대기 코드를 테스트가 들고 있지 않아도 된다. Selenium은 `WebDriverWait`을
+   명시적으로 만들어 Page 클래스에 넘겨야 하고(`selenium/Pages/LoginPage.cs`
+   생성자 참고), 그 대기를 빠뜨린 자리가 그대로 flaky가 된다.
+2. **트레이스.** 실패 시 스냅샷·네트워크·콘솔이 담긴 트레이스를 표준으로
+   남길 수 있다. 이 저장소의 실패 분석 절차가 여기 기대고 있다.
+3. **브라우저 설치.** `playwright.ps1 install`이 브라우저까지 고정 버전으로
+   받아 CI와 로컬이 같은 환경이 된다. Selenium은 러너에 깔린 Chrome을 쓰므로
+   러너 이미지가 바뀌면 브라우저 버전도 같이 바뀐다.
+
+두 스위트는 같은 규칙(셀렉터는 Page 클래스 안에만, Page는 assert하지 않음,
+`Thread.Sleep` 금지)을 따르고, 계정·비밀번호 상수는 `src/Support/TestData.cs`
+하나를 `selenium` 프로젝트가 링크해 공유한다. 복사본을 만들면 한쪽만 고쳐진다.
 
 ### 설계 규칙
 
@@ -131,15 +170,26 @@ GitHub가 몇 분 캐싱하므로 방금 푸시한 결과가 안 보이면 강�
 curl -s https://github.com/ngg42651/saucedemo-e2e/actions/workflows/ci.yml/badge.svg | grep -o "CI - [a-z]*"
 ```
 
-정확한 확인은 Actions 탭에서 한다. **Actions → CI**에서 실행을 하나 고르고
-`test` 잡의 **Test** 단계 로그를 열면 마지막에 요약 줄이 남는다.
+**실행 건수는 사람이 확인하지 않는다.** 잡이 초록이어도 실행 건수가 0이면
+검증된 것이 없기 때문에, `Summarize test counts` 단계가 두 프로젝트의
+`results.trx`에서 건수를 읽어 실행 요약(Actions 실행 페이지 상단 Summary)에
+표로 남기고 **합계가 0이면 잡을 실패시킨다.**
+
+| 결과 파일 | 전체 | 통과 | 실패 |
+|---|---:|---:|---:|
+| `TestResults/results.trx` | 20 | 20 | 0 |
+| `selenium/TestResults/results.trx` | 2 | 2 | 0 |
+| **합계** | **22** | **22** | **0** |
+
+이 단계는 `if: always()`라 테스트가 실패한 실행에서도 건수를 남긴다.
+원본 로그로 직접 확인하려면 **Actions → CI**에서 실행을 고르고 `test` 잡의
+**Test** 단계 로그 마지막 요약 줄을 본다.
 
 ```
 Passed!  - Failed: 0, Passed: 20, Skipped: 0, Total: 20, Duration: 8 s
 ```
 
-`Total`이 20인지 반드시 확인한다. 테스트가 하나도 발견되지 않아도 잡은
-초록으로 끝나기 때문에, 초록불만 보고 판단하면 빈 실행을 통과로 착각한다.
+`trx` 파일 자체는 `test-results` 아티팩트로 올라간다.
 
 ## 실패 분석 방법
 
@@ -162,3 +212,7 @@ CI 재시도 횟수는 0이다. flaky를 재시도로 가리면 자동화가 존
 - 대상이 외부 공개 데모 사이트이므로 사이트 장애나 DOM 변경 시 테스트가
   실패할 수 있다. 이 때문에 스케줄 실행을 붙이지 않고 `push`·`pull_request`
   에서만 돌린다.
+- `selenium/` 스위트는 브라우저를 고정 버전으로 받지 않고 실행 환경에 깔린
+  Chrome을 쓴다. CI에서는 러너 이미지의 Chrome, 로컬에서는 설치된 Chrome이며
+  드라이버만 Selenium Manager가 맞춰 받는다. 주력 스위트와 달리 브라우저
+  버전이 환경에 따라 달라진다.
