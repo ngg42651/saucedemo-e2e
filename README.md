@@ -28,6 +28,24 @@ dotnet test selenium/SauceDemo.Selenium.csproj
 
 `dotnet test`를 인자 없이 돌리면 두 프로젝트가 모두 실행된다(20 + 2 = 22개).
 
+### 브라우저를 눈으로 보며 실행
+
+기본은 headless(창 없이 실행)다. **`--settings`를 빼도 창은 뜨지 않는다** — Playwright의 기본값
+자체가 headless라 `.runsettings`가 없어도 같다. 창을 보려면 환경변수를 준다.
+
+```bash
+# 브라우저 창을 띄우고 실행
+HEADED=1 dotnet test SauceDemo.E2E.csproj --filter "FullyQualifiedName~LoginTests"
+
+# Playwright Inspector로 한 단계씩 멈춰가며 실행 (셀렉터 확인용)
+PWDEBUG=1 dotnet test SauceDemo.E2E.csproj --filter "FullyQualifiedName~LoginTests"
+```
+
+PowerShell에서는 `$env:HEADED="1"` 형태로 먼저 설정한다.
+
+둘 다 **실제 창을 띄우므로 데스크톱 세션이 있는 환경에서만 동작한다.** CI 러너나 원격 셸에서는
+`spawn UNKNOWN` 같은 오류로 실패하니, 실패 원인을 찾을 때는 창 대신 아래 트레이스를 쓴다.
+
 ## 테스트 전략
 
 ### 커버리지 판단 기준
@@ -206,6 +224,23 @@ CI는 러너에 PowerShell 7이 있어 `pwsh`를 쓰고, 로컬에서는 위 예
 
 CI 재시도 횟수는 0이다. flaky를 재시도로 가리면 자동화가 존재하는
 이유가 사라지기 때문이다.
+
+### 트레이스를 통과·실패 가리지 않고 남기는 이유
+
+`src/Support/BaseTest.cs`는 테스트가 끝날 때마다 결과와 무관하게 트레이스를
+저장한다. 흔한 설정인 "실패한 것만 남기기"를 쓰지 않은 것은 의도적이다.
+
+**xUnit은 테스트의 성공·실패 결과를 테스트 클래스에 넘겨주지 않는다.** NUnit이라면
+`TestContext.CurrentContext.Result`로 읽을 수 있지만, xUnit에는 대응하는 공개 API가
+없어 같은 동작을 구현하려면 내부 구조에 리플렉션으로 접근해야 한다. **테스트가 아니라
+테스트 도구를 해킹하는 코드가 생기고, xUnit이 올라갈 때마다 깨질 자리가 된다.**
+
+그 복잡도를 지불하는 대신 전부 남기고, 대신 새어 나가지 않게 두 곳을 막았다.
+
+- 저장소 오염: `.gitignore`의 `playwright-traces/`
+- CI 용량: 트레이스 아티팩트 업로드는 `if: failure()`라 실패한 실행에서만 올라간다
+
+로컬에서는 실행마다 파일이 쌓이므로 주기적으로 `playwright-traces/`를 비우면 된다.
 
 ## 알려진 제약
 

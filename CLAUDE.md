@@ -8,6 +8,8 @@ SauceDemo(https://www.saucedemo.com) 대상 E2E 자동화 포트폴리오.
 - 브라우저 설치: `powershell bin/Debug/net10.0/playwright.ps1 install chromium`
 - 주력 스위트만: `dotnet test SauceDemo.E2E.csproj`
 - Selenium 보조 스위트만: `dotnet test selenium/SauceDemo.Selenium.csproj`
+- 창을 띄워 실행: `HEADED=1 dotnet test SauceDemo.E2E.csproj --filter "..."` (데스크톱 세션 필요)
+- Inspector로 단계 실행: `PWDEBUG=1 dotnet test SauceDemo.E2E.csproj --filter "..."`
 
 ## 불변 규칙
 1. `Thread.Sleep`을 쓰지 않는다. Playwright 자동 대기와 `Expect()`만 쓴다 (Selenium 쪽은 `WebDriverWait`만)
